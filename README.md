@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/express42/ansible-repertory.svg?branch=master)](https://travis-ci.org/express42/ansible-repertory)
+[![Build Status](https://travis-ci.org/hostberg/influxdb-grafana-playground.svg?branch=master)](https://travis-ci.org/hostberg/influxdb-grafana-playground)
 
 # Overview
 This repository is used as a good start point for infrastructure development. It contains basic roles and describes workflow to create solid solution.
