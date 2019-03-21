@@ -1,0 +1,23 @@
+---
+- name: Install requirements
+  yum:
+    name: ['createrepo']
+    state: installed
+
+- name: Prepare local repo folder
+  file:
+    path: "{{ grafana_local_repo }}"
+    state: directory
+    recurse: true
+    mode: 0755
+
+- name: Download package file
+  get_url:
+    url: https://dl.grafana.com/oss/release/grafana-6.0.1-1.x86_64.rpm
+    dest: "{{ grafana_local_repo }}"
+    checksum: sha256:366a98b6594f0baa47abbecb847d26bfdc0cbcbe15e3183f1b35b99f83133078
+    mode: 0644
+
+- name: Update local repo
+  command: "createrepo {{ grafana_local_repo }}"
+  changed_when: false

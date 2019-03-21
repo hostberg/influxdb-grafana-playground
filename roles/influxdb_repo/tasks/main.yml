@@ -1,0 +1,23 @@
+---
+- name: Install requirements
+  yum:
+    name: ['createrepo']
+    state: installed
+
+- name: Prepare local repo folder
+  file:
+    path: "{{ influxdb_local_repo }}"
+    state: directory
+    recurse: true
+    mode: 0755
+
+- name: Download package file
+  get_url:
+    url: https://repos.influxdata.com/rhel/7Server/x86_64/stable/influxdb-1.7.4.x86_64.rpm
+    dest: "{{ influxdb_local_repo }}"
+    checksum: sha256:7c61796ad6270a862751283bc18e67cdc8be36b56f54120ee2ffa212b6c229a6
+    mode: 0644
+
+- name: Update local repo
+  command: "createrepo {{ influxdb_local_repo }}"
+  changed_when: false

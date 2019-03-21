@@ -1,0 +1,4 @@
+---
+- src: cloudalchemy.grafana
+  version: 0.13.0
+- src: hostberg.influxdb

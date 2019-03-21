@@ -1,0 +1,19 @@
+---
+- name: Configure Grafana server
+  hosts: grafana
+  become: true
+  vars:
+    grafana_local_repo: /opt/localrepo/grafana
+    grafana_yum_repo_template: repos/grafana.repo.j2
+    grafana_security:
+      admin_user: admin
+      admin_password: admin
+    grafana_datasources:
+      - name: InfluxDB
+        type: influxdb
+        url: http://localhost:8086
+        access: proxy
+        database: metrics
+  roles:
+    - grafana_repo
+    - cloudalchemy.grafana

@@ -1,0 +1,11 @@
+---
+- name: Configure InfluxDB server
+  hosts: influxdb
+  vars:
+    influxdb_local_repo: /opt/localrepo/influxdb
+    influxdb_yum_repo_template: repos/influxdb.repo.j2
+    influxdb_databases:
+      - metrics
+  roles:
+    - influxdb_repo
+    - hostberg.influxdb

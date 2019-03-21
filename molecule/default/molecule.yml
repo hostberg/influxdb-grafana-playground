@@ -1,0 +1,49 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: requirements.yml
+    roles-path: .imported_roles
+    force: false
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: molecule/resources/yamllint.conf
+    s: false
+platforms:
+  - name: instance
+    groups:
+      - influxdb
+      - grafana
+    image: "geerlingguy/docker-centos7-ansible:latest"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    published_ports:
+      - 127.0.0.1:3000:3000/tcp
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      group_vars: ../resources/group_vars/
+  env:
+    ANSIBLE_ROLES_PATH: ../../roles/:../../.imported_roles/
+  playbooks:
+    converge: playbook.yml
+  lint:
+    name: ansible-lint
+    options:
+      exclude:
+        - .imported_roles/
+scenario:
+  name: default
+verifier:
+  name: testinfra
+  directory: ../resources/tests/
+  options:
+    n: 4
+  lint:
+    name: flake8
