@@ -9,7 +9,6 @@
     path: "{{ grafana_local_repo }}"
     state: directory
     recurse: true
-    mode: 0755
 
 - name: Download package file
   get_url:
