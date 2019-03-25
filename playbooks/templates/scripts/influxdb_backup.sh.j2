@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BACKUP_FOLDER="/tmp"
+BACKUP_NAME="influxdb-$(date +"%Y-%m-%d-%H-%M")"
+BACKUP_PATH="${BACKUP_FOLDER}/${BACKUP_NAME}"
+
+influxd backup -portable ${BACKUP_PATH}
+
+tar --remove-files -zcvf ${BACKUP_PATH}.tar.gz -C ${BACKUP_FOLDER} ${BACKUP_NAME}
+
+# upload *.tar.gz to Nexus and remove it

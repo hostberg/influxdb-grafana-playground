@@ -1,0 +1,23 @@
+#!/bin/bash
+
+BACKUP_FOLDER="/tmp"
+BACKUP_NAME_DASHBOARDS="grafana-dashboards-$(date +"%Y-%m-%d-%H-%M")"
+BACKUP_NAME_DATASOURCES="grafana-datasources-$(date +"%Y-%m-%d-%H-%M")"
+BACKUP_NAME_FOLDERS="grafana-folders-$(date +"%Y-%m-%d-%H-%M")"
+BACKUP_PATH_DASHBOARDS="${BACKUP_FOLDER}/${BACKUP_NAME_DASHBOARDS}"
+BACKUP_PATH_DATASOURCES="${BACKUP_FOLDER}/${BACKUP_NAME_DATASOURCES}"
+BACKUP_PATH_FOLDERS="${BACKUP_FOLDER}/${BACKUP_NAME_FOLDERS}"
+
+mkdir -p ${BACKUP_PATH_DASHBOARDS}
+mkdir -p ${BACKUP_PATH_DATASOURCES}
+mkdir -p ${BACKUP_PATH_FOLDERS}
+
+python {{ grafana_scripts_folder }}/grafana-backup-tool/saveDashboards.py ${BACKUP_PATH_DASHBOARDS} || exit 0
+python {{ grafana_scripts_folder }}/grafana-backup-tool/saveDatasources.py ${BACKUP_PATH_DATASOURCES} || exit 0
+python {{ grafana_scripts_folder }}/grafana-backup-tool/saveFolders.py ${BACKUP_PATH_FOLDERS} || exit 0
+
+tar --remove-files -zcvf ${BACKUP_PATH_DASHBOARDS}.tar.gz -C ${BACKUP_FOLDER} ${BACKUP_NAME_DASHBOARDS}
+tar --remove-files -zcvf ${BACKUP_PATH_DATASOURCES}.tar.gz -C ${BACKUP_FOLDER} ${BACKUP_NAME_DATASOURCES}
+tar --remove-files -zcvf ${BACKUP_PATH_FOLDERS}.tar.gz -C ${BACKUP_FOLDER} ${BACKUP_NAME_FOLDERS}
+
+# upload *.tar.gz to Nexus and remove them

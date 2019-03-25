@@ -1,0 +1,48 @@
+---
+- name: Prepare scipts folder
+  file:
+    path: "{{ influxdb_scripts_folder }}"
+    state: directory
+    owner: "{{ influxdb_scripts_user }}"
+    group: "{{ influxdb_scripts_user }}"
+    mode: 0700
+
+- name: Add InfluxDB backup script
+  template:
+    src: scripts/influxdb_backup.sh.j2
+    dest: "{{ influxdb_scripts_folder }}/influxdb_backup.sh"
+    owner: "{{ influxdb_scripts_user }}"
+    group: "{{ influxdb_scripts_user }}"
+    mode: 0700
+    force: true
+    backup: true
+
+- name: Add InfluxDB backup cron
+  cron:
+    name: "Backup InfluxDB"
+    minute: "50"
+    hour: "22"
+    user: "{{ influxdb_scripts_user }}"
+    job: "{{ influxdb_scripts_folder }}/influxdb_backup.sh >/dev/null 2>&1"
+    backup: true
+
+# How To recovery database
+# https://docs.influxdata.com/influxdb/v1.7/administration/backup_and_restore/
+
+# [root@centos-s-1vcpu-2gb-ams3-01 tmp]# influx -database metrics -execute 'select * from speed_ms limit 3'
+# name: speed_ms
+# time       location     speed speed description
+# ----       --------     ----- -----------------
+# 1502208946 biron_france 13.57 speed in meter per second
+# 1502208947 biron_france 13.32 speed in meter per second
+# 1502208948 biron_france 13.11 speed in meter per second
+# [root@centos-s-1vcpu-2gb-ams3-01 tmp]# influx -execute 'drop database metrics'
+# [root@centos-s-1vcpu-2gb-ams3-01 tmp]# influxd restore -portable -db metrics ./influxdb-2019-03-25-18-50
+# 2019/03/25 19:31:49 Restoring shard 3 live from backup 20190325T185001Z.s3.tar.gz
+# [root@centos-s-1vcpu-2gb-ams3-01 tmp]# influx -database metrics -execute 'select * from speed_ms limit 3'
+# name: speed_ms
+# time       location     speed speed description
+# ----       --------     ----- -----------------
+# 1502208946 biron_france 13.57 speed in meter per second
+# 1502208947 biron_france 13.32 speed in meter per second
+# 1502208948 biron_france 13.11 speed in meter per second

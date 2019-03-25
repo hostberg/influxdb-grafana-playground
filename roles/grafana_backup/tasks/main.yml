@@ -1,0 +1,75 @@
+---
+- name: Prepare scipts folder
+  file:
+    path: "{{ grafana_scripts_folder }}"
+    state: directory
+    owner: "{{ grafana_scripts_user }}"
+    group: "{{ grafana_scripts_user }}"
+    mode: 0700
+
+# Using https://github.com/ysde/grafana-backup-tool for Grafana backups
+- name: Prepare grafana-backup-tool folder
+  file:
+    path: "{{ grafana_scripts_folder }}/grafana-backup-tool"
+    state: directory
+    owner: "{{ grafana_scripts_user }}"
+    group: "{{ grafana_scripts_user }}"
+    mode: 0700
+
+- name: Add grafana-backup-tool files
+  copy:
+    src: "files/grafana-backup-tool/{{ item.src }}"
+    dest: "{{ grafana_scripts_folder }}/grafana-backup-tool/{{ item.dest }}"
+    owner: "{{ grafana_scripts_user }}"
+    group: "{{ grafana_scripts_user }}"
+    mode: "{{ item.chmod }}"
+  with_items:
+    - { src: 'backup_grafana.sh', dest: 'backup_grafana.sh', chmod: '0700' }
+    - { src: 'commons.py', dest: 'commons.py', chmod: '0600' }
+    - { src: 'createDashboard.py', dest: 'createDashboard.py', chmod: '0600' }
+    - { src: 'createDatasource.py', dest: 'createDatasource.py', chmod: '0600' }
+    - { src: 'createFolder.py', dest: 'createFolder.py', chmod: '0600' }
+    - { src: 'dashboardApi.py', dest: 'dashboardApi.py', chmod: '0600' }
+    # - { src: 'grafanaSettings.py', dest: 'grafanaSettings.py', chmod: '0600' }
+    - { src: 'restore_dashboards.sh', dest: 'restore_dashboards.sh', chmod: '0700' }
+    - { src: 'restore_datasources.sh', dest: 'restore_datasources.sh', chmod: '0700' }
+    - { src: 'restore_folders.sh', dest: 'restore_folders.sh', chmod: '0700' }
+    - { src: 'saveDashboards.py', dest: 'saveDashboards.py', chmod: '0600' }
+    - { src: 'saveDatasources.py', dest: 'saveDatasources.py', chmod: '0600' }
+    - { src: 'saveFolders.py', dest: 'saveFolders.py', chmod: '0600' }
+
+- name: Add grafana-backup-tool config
+  template:
+    src: grafana-backup-tool/grafanaSettings.py.j2
+    dest: "{{ grafana_scripts_folder }}/grafana-backup-tool/grafanaSettings.py"
+    owner: "{{ grafana_scripts_user }}"
+    group: "{{ grafana_scripts_user }}"
+    mode: 0600
+    force: true
+    backup: true
+
+- name: Add Grafana backup script
+  template:
+    src: scripts/grafana_backup.sh.j2
+    dest: "{{ grafana_scripts_folder }}/grafana_backup.sh"
+    owner: "{{ grafana_scripts_user }}"
+    group: "{{ grafana_scripts_user }}"
+    mode: 0700
+    force: true
+    backup: true
+
+- name: Add Grafana backup cron
+  cron:
+    name: "Backup Grafana"
+    minute: "50"
+    hour: "22"
+    user: "{{ grafana_scripts_user }}"
+    job: "{{ grafana_scripts_folder }}/grafana_backup.sh >/dev/null 2>&1"
+    backup: true
+
+# How To recovery dashboards/datasources/folders
+# https://github.com/ysde/grafana-backup-tool
+# Use scripts:
+# - restore_dashboards.sh
+# - restore_datasources.sh
+# - restore_folders.sh

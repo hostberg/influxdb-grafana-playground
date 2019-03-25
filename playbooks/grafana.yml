@@ -14,6 +14,10 @@
         url: http://localhost:8086
         access: proxy
         database: metrics
+    grafana_scripts_user: root
+    grafana_scripts_folder: /root/.scripts
+    grafana_api_key: eyJrIjoieXZiRVc0YW02SnhFdm9qbUhqTTlCMWVmWUhpUHNXOEUiLCJuIjoiYmFja3VwIiwiaWQiOjF9
   roles:
     - grafana_repo
     - cloudalchemy.grafana
+    - grafana_backup
