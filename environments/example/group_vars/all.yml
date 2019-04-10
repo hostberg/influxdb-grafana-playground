@@ -1,0 +1,12 @@
+---
+influxdb_admin_name: admin
+influxdb_admin_passwd: wBfNNcw1uuShx9F
+influxdb_metrics_db: metrics
+influxdb_metrics_rw_name: metrics_rw
+influxdb_metrics_rw_passwd: wBfNNcw1uuShx9F1
+influxdb_metrics_ro_name: metrics_ro
+influxdb_metrics_ro_passwd: wBfNNcw1uuShx9F2
+
+grafana_admin_name: admin
+grafana_admin_passwd: admin
+grafana_backup_api: eyJrIjoieXZiRVc0YW02SnhFdm9qbUhqTTlCMWVmWUhpUHNXOEUiLCJuIjoiYmFja3VwIiwiaWQiOjF9

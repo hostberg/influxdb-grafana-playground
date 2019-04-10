@@ -1,14 +1,10 @@
 ---
 - name: Configure InfluxDB server
   hosts: influxdb
-  vars:
-    influxdb_local_repo: /opt/localrepo/influxdb
-    influxdb_yum_repo_template: repos/influxdb.repo.j2
-    influxdb_databases:
-      - metrics
-    influxdb_scripts_user: root
-    influxdb_scripts_folder: /root/.scripts
   roles:
     - influxdb_repo
     - hostberg.influxdb
     - influxdb_backup
+  environment:
+    INFLUX_USERNAME: "{{ influxdb_admin_name }}"
+    INFLUX_PASSWORD: "{{ influxdb_admin_passwd }}"

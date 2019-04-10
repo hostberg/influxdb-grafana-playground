@@ -1,0 +1,32 @@
+    # InfluxDB installation
+    influxdb_local_repo: /opt/localrepo/influxdb
+    influxdb_yum_repo_template: repos/influxdb.repo.j2
+    # InfluxDB configuration
+    influxdb_config:
+    - http:
+      -  auth-enabled: true
+    # InfluxDB databases
+    influxdb_databases:
+      - "{{ influxdb_metrics_db }}"
+    # InfluxDB admins
+    influxdb_admins:
+      - name:     "{{ influxdb_admin_name }}"
+        password: "{{ influxdb_admin_passwd }}"
+    # InfluxDB users
+    influxdb_users:
+      - database: "{{ influxdb_metrics_db }}"
+        name:     "{{ influxdb_metrics_rw_name }}"
+        password: "{{ influxdb_metrics_rw_passwd }}"
+      - database: "{{ influxdb_metrics_db }}"
+        name:     "{{ influxdb_metrics_ro_name }}"
+        password: "{{ influxdb_metrics_ro_passwd }}"
+    influxdb_privileges:
+      - database: "{{ influxdb_metrics_db }}"
+        user:     "{{ influxdb_metrics_rw_name }}"
+        grant:    WRITE
+      - database: "{{ influxdb_metrics_db }}"
+        user:     "{{ influxdb_metrics_ro_name }}"
+        grant:    READ
+    # InfluxDB backup configiration
+    influxdb_scripts_user: root
+    influxdb_scripts_folder: /root/.scripts
